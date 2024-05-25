@@ -2,7 +2,7 @@
   "name": "desafio3_server",
   "version": "1.0.0",
   "description": "Componente servidor del desafio 3",
-  "main": "dist/start.js",
+  "main": "src/start.ts",
   "scripts": {
     "build": "npx tsc",
     "start": "nodemon src/start.ts",
