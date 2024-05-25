@@ -2,10 +2,10 @@
   "name": "desafio3_server",
   "version": "1.0.0",
   "description": "Componente servidor del desafio 3",
-  "main": "src/start.ts",
+  "main": "dist/start.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "nodemon src/start.ts",
+    "start": "node dist/start.js",
     "dev": "nodemon src/start.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
