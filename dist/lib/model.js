@@ -78,6 +78,10 @@ exports.productsSchema = new mongoose_1.default.Schema({
         max: 1000,
     },
     photo: {
+        type: Buffer,
+        required: true,
+    },
+    contentType: {
         type: String,
         required: true,
     },

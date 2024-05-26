@@ -81,11 +81,11 @@ const getCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const cartDetails = productsInCart.map((cartProduct) => {
                 const product = productMap[cartProduct.productId];
                 return {
-                    productId: product._id,
+                    productId: product.id,
                     name: product.name,
                     quantity: cartProduct.quantity,
                     price: product.price,
-                    photo: product.photo,
+                    photo: product.photo.toString("base64"),
                 };
             });
             res.status(http_status_1.default.OK).send(cartDetails);

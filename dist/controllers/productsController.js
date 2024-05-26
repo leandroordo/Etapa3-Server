@@ -21,7 +21,8 @@ const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         (0, utils_1.connectToDB)();
         const products = yield model_1.Product.find();
-        res.status(http_status_1.default.OK).send(products);
+        const productsWithBase64Image = products.map((product) => (Object.assign(Object.assign({}, product._doc), { photo: product.photo.toString("base64") })));
+        res.status(http_status_1.default.OK).json(productsWithBase64Image);
     }
     catch (err) {
         console.log(err);
@@ -68,14 +69,21 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.getProduct = getProduct;
 const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.body.name) {
+    const { body, file } = req;
+    if (!body.name) {
         res.status(http_status_1.default.BAD_REQUEST).send({
             message: "El contenido está vacío",
         });
         return;
     }
+    if (file && !file.buffer) {
+        res.status(http_status_1.default.BAD_REQUEST).send({
+            message: "El contenido de la imagen está vacío",
+        });
+        return;
+    }
     try {
-        const { name, price, stock, brand, category, description, longDescription, freeDelivery, ageFrom, ageTo, photo, } = req.body;
+        const { name, price, stock, brand, category, description, longDescription, freeDelivery, ageFrom, ageTo, } = req.body;
         const validatedFields = validation_1.addProductSchema.safeParse({
             name,
             price,
@@ -85,7 +93,6 @@ const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             longDescription,
             ageFrom,
             ageTo,
-            photo,
         });
         if (!validatedFields.success) {
             res.status(http_status_1.default.BAD_REQUEST).send({
@@ -105,12 +112,14 @@ const addProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             freeDelivery: freeDelivery === "on",
             ageFrom,
             ageTo,
-            photo,
+            photo: file.buffer,
+            contentType: file.mimetype,
         });
         yield newProduct.save();
         res.status(http_status_1.default.CREATED).send(newProduct);
     }
     catch (error) {
+        console.log(error);
         res.status(http_status_1.default.INTERNAL_SERVER_ERROR).send({
             message: "Error al crear el producto",
         });

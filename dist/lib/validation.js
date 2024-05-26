@@ -58,15 +58,6 @@ exports.addProductSchema = zod_1.z.object({
     })
         .gte(0, { message: "La edad hasta debe ser cero o mayor a cero" })
         .lte(130, { message: "La edad hasta es muy grande" }),
-    photo: zod_1.z
-        .string({
-        invalid_type_error: "La dirección URL de la foto no es válida",
-        description: "URL de la foto del producto",
-        required_error: "La dirección URL de la foto es obligatoria",
-    })
-        .min(8, { message: "La dirección URL de la foto es muy corta" })
-        .max(255, { message: "LLa dirección URL de la foto es muy larga" })
-        .url({ message: "La dirección URL de la foto no es válida" }),
 });
 exports.updateProductSchema = zod_1.z.object({
     name: zod_1.z.optional(zod_1.z
