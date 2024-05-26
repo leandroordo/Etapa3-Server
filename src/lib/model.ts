@@ -54,6 +54,10 @@ export const productsSchema = new mongoose.Schema(
       max: 1000,
     },
     photo: {
+      type: Buffer,
+      required: true,
+    },
+    contentType: {
       type: String,
       required: true,
     },

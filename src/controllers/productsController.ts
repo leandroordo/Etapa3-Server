@@ -13,7 +13,12 @@ export const getAllProducts = async (req: Request, res: Response) => {
     connectToDB();
 
     const products = await Product.find();
-    res.status(httpStatus.OK).send(products);
+    const productsWithBase64Image = products.map((product) => ({
+      ...product._doc,
+      photo: product.photo.toString("base64"),
+    }));
+
+    res.status(httpStatus.OK).json(productsWithBase64Image);
   } catch (err) {
     console.log(err);
     res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
@@ -61,9 +66,17 @@ export const getProduct = async (req: Request, res: Response) => {
 };
 
 export const addProduct = async (req: Request, res: Response) => {
-  if (!req.body.name) {
+  const { body, file } = req;
+
+  if (!body.name) {
     res.status(httpStatus.BAD_REQUEST).send({
       message: "El contenido está vacío",
+    });
+    return;
+  }
+  if (file && !file.buffer) {
+    res.status(httpStatus.BAD_REQUEST).send({
+      message: "El contenido de la imagen está vacío",
     });
     return;
   }
@@ -80,7 +93,6 @@ export const addProduct = async (req: Request, res: Response) => {
       freeDelivery,
       ageFrom,
       ageTo,
-      photo,
     } = req.body;
 
     const validatedFields = addProductSchema.safeParse({
@@ -92,7 +104,6 @@ export const addProduct = async (req: Request, res: Response) => {
       longDescription,
       ageFrom,
       ageTo,
-      photo,
     });
 
     if (!validatedFields.success) {
@@ -114,13 +125,15 @@ export const addProduct = async (req: Request, res: Response) => {
       freeDelivery: freeDelivery === "on",
       ageFrom,
       ageTo,
-      photo,
+      photo: file!.buffer,
+      contentType: file!.mimetype,
     });
 
     await newProduct.save();
 
     res.status(httpStatus.CREATED).send(newProduct);
   } catch (error) {
+    console.log(error);
     res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
       message: "Error al crear el producto",
     });

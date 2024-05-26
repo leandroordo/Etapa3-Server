@@ -81,11 +81,11 @@ export const getCart = async (req: Request, res: Response) => {
       const cartDetails = productsInCart.map((cartProduct) => {
         const product = productMap[cartProduct.productId];
         return {
-          productId: product._id,
+          productId: product.id,
           name: product.name,
           quantity: cartProduct.quantity,
           price: product.price,
-          photo: product.photo,
+          photo: product.photo.toString("base64"),
         };
       });
 
